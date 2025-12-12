@@ -94,6 +94,18 @@ export async function POST(req: Request) {
             `${escapeXml(text)}` +
             `</prosody></voice></speak>`;
 
+        console.log("SSML content:", ssml);
+        console.log(
+            "Voice:",
+            voice,
+            "Rate:",
+            rate,
+            "Pitch:",
+            pitch,
+            "Format:",
+            format
+        );
+
         const ttsUrl = `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`;
         console.log("Fetching TTS from:", ttsUrl);
 
