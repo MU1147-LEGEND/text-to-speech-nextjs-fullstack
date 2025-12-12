@@ -3,45 +3,240 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 221.2 83.2% 53.3%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 221.2 83.2% 53.3%;
-  --radius: 1rem;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 1rem;
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 217.2 91.2% 59.8%;
-  --primary-foreground: 222.2 47.4% 11.2%;
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 224.3 76.3% 48%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
 }
 
-* { @apply border-border; }
-body { @apply bg-background text-foreground; }
+* {
+    @apply border-border;
+}
+body {
+    @apply bg-background text-foreground;
+}
+
+/* Base responsive container */
+html {
+    @apply scroll-smooth;
+}
+
+body {
+    @apply overflow-x-hidden;
+}
+
+/* Tablet and below - switch to single column */
+@media (max-width: 1024px) {
+    .grid.gap-4.md\:grid-cols-5 {
+        @apply grid-cols-1 gap-3;
+    }
+
+    .md\:col-span-3,
+    .md\:col-span-2 {
+        @apply col-span-1;
+    }
+}
+
+/* Tablet - medium adjustments */
+@media (max-width: 768px) {
+    .min-h-\[240px\] {
+        @apply min-h-[160px];
+    }
+
+    .rounded-2xl {
+        @apply rounded-xl;
+    }
+
+    .p-3 {
+        @apply p-2.5;
+    }
+
+    .pb-3 {
+        @apply pb-2;
+    }
+}
+
+/* Mobile - button and layout fixes */
+@media (max-width: 640px) {
+    /* Main flex wrapper - allow wrapping */
+    .flex.flex-wrap.items-center.gap-2 {
+        gap: 0.25rem;
+        width: 100%;
+    }
+
+    /* Nested flex divs - stack on mobile */
+    .flex.flex-wrap.items-center.gap-2 > div {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+
+    /* Button sizing on mobile - smaller buttons */
+    button {
+        min-width: 0;
+        flex-shrink: 0;
+        font-size: 0.75rem;
+        padding: 0.375rem 0.5rem;
+    }
+
+    /* Text area adjustments */
+    .min-h-\[240px\] {
+        @apply min-h-[120px];
+    }
+
+    /* Remove margin auto on mobile */
+    .ml-auto {
+        @apply ml-0;
+    }
+
+    .mx-auto {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+    }
+
+    .w-4\/5 {
+        @apply w-full;
+    }
+
+    /* Card adjustments */
+    .rounded-2xl {
+        @apply rounded-lg;
+    }
+
+    /* Label styling */
+    label {
+        @apply text-sm;
+    }
+
+    /* Input fields full width */
+    input,
+    textarea {
+        @apply w-full;
+    }
+
+    /* Icon and text sizing */
+    button svg {
+        height: 0.75rem;
+        width: 0.75rem;
+    }
+
+    button span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.75rem;
+    }
+}
+
+/* Small mobile - extra compact */
+@media (max-width: 480px) {
+    .p-3 {
+        @apply p-2;
+    }
+
+    .rounded-2xl {
+        @apply rounded-md;
+    }
+
+    button {
+        @apply text-xs py-1.5 px-1.5;
+    }
+
+    .space-y-3 > * + * {
+        @apply mt-2;
+    }
+
+    /* Ensure no text overflow */
+    button span {
+        @apply truncate;
+    }
+
+    /* Reduce card header padding */
+    .pb-3 {
+        @apply pb-1.5;
+    }
+}
+
+/* Toast notification styles */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+.status-toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    animation: slideDown 0.3s ease-out forwards;
+    max-width: 90%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.status-toast.fade-out {
+    animation: slideUp 0.3s ease-out forwards;
+}
