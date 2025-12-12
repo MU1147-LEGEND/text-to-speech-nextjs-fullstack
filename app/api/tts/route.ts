@@ -160,7 +160,7 @@ export async function POST(req: Request) {
             return new Response(
                 JSON.stringify({
                     error: `TTS error: ${ttsRes.status}`,
-                    details: errText || "(empty error body from Azure)",
+                    details: errText || "(empty error body from Server)",
                     requestId: reqId || undefined,
                     hint:
                         ttsRes.status === 400

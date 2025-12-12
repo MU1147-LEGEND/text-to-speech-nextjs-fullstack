@@ -120,9 +120,7 @@ const AZURE_VOICES: Array<{ label: string; value: string }> = [
 ];
 
 export default function TextToSpeechApp() {
-    const [text, setText] = useState(
-        "Hello, welcome to this text to speech Services. Change the text, voice, rate, and pitch settings to generate your own audio files."
-    );
+    const [text, setText] = useState("");
 
     const [voice, setVoice] = useState("en-US-JennyNeural");
     const [rate, setRate] = useState<number>(1);
