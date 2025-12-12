@@ -23,12 +23,33 @@ export async function POST(req: Request) {
     try {
         const key = process.env.AZURE_SPEECH_KEY;
         const region = process.env.AZURE_SPEECH_REGION;
-        if (!key || !region)
-            return new Response("Missing Azure env vars", { status: 500 });
+
+        // Debug logging
+        console.log(
+            "Environment check - Key exists:",
+            !!key,
+            "Region exists:",
+            !!region,
+            "Region value:",
+            region
+        );
+
+        if (!key || !region) {
+            console.error("Missing environment variables");
+            return new Response(
+                JSON.stringify({ error: "Missing Azure env vars" }),
+                { status: 500, headers: { "Content-Type": "application/json" } }
+            );
+        }
 
         const body = await req.json();
         const text = String(body?.text ?? "").trim();
-        if (!text) return new Response("Empty text", { status: 400 });
+        if (!text) {
+            return new Response(JSON.stringify({ error: "Empty text" }), {
+                status: 400,
+                headers: { "Content-Type": "application/json" },
+            });
+        }
 
         const voice = String(body?.voice ?? "en-US-JennyNeural");
         const rate = Number(body?.rate ?? 1);
@@ -38,25 +59,33 @@ export async function POST(req: Request) {
         );
 
         // token
-        const tokenRes = await fetch(
-            `https://${region}.api.cognitive.microsoft.com/sts/v1.0/issueToken`,
-            {
-                method: "POST",
-                headers: {
-                    "Ocp-Apim-Subscription-Key": key,
-                    "Content-type": "application/x-www-form-urlencoded",
-                    "Content-Length": "0",
-                },
-            }
-        );
+        const tokenUrl = `https://${region}.api.cognitive.microsoft.com/sts/v1.0/issueToken`;
+        console.log("Fetching token from:", tokenUrl);
+
+        const tokenRes = await fetch(tokenUrl, {
+            method: "POST",
+            headers: {
+                "Ocp-Apim-Subscription-Key": key,
+                "Content-type": "application/x-www-form-urlencoded",
+                "Content-Length": "0",
+            },
+        });
+
+        console.log("Token response status:", tokenRes.status);
+
         if (!tokenRes.ok) {
             const errorText = await tokenRes.text();
             console.error("Token error:", tokenRes.status, errorText);
-            return new Response(`Token error: ${tokenRes.status}`, {
-                status: 502,
-            });
+            return new Response(
+                JSON.stringify({
+                    error: `Token error: ${tokenRes.status}`,
+                    details: errorText,
+                }),
+                { status: 502, headers: { "Content-Type": "application/json" } }
+            );
         }
         const token = await tokenRes.text();
+        console.log("Token obtained successfully");
 
         const ssml =
             `<speak version="1.0" xml:lang="en-US">` +
@@ -65,31 +94,47 @@ export async function POST(req: Request) {
             `${escapeXml(text)}` +
             `</prosody></voice></speak>`;
 
-        const ttsRes = await fetch(
-            `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`,
-            {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/ssml+xml",
-                    "X-Microsoft-OutputFormat": format,
-                    "User-Agent": "vercel-tts-app",
-                },
-                body: ssml,
-            }
-        );
+        const ttsUrl = `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`;
+        console.log("Fetching TTS from:", ttsUrl);
+
+        const ttsRes = await fetch(ttsUrl, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/ssml+xml",
+                "X-Microsoft-OutputFormat": format,
+                "User-Agent": "vercel-tts-app",
+            },
+            body: ssml,
+        });
+
+        console.log("TTS response status:", ttsRes.status);
+
         if (!ttsRes.ok) {
             const errorText = await ttsRes.text();
             console.error("TTS error:", ttsRes.status, errorText);
-            return new Response(`TTS error: ${ttsRes.status}`, { status: 502 });
+            return new Response(
+                JSON.stringify({
+                    error: `TTS error: ${ttsRes.status}`,
+                    details: errorText,
+                }),
+                { status: 502, headers: { "Content-Type": "application/json" } }
+            );
         }
 
         const audio = await ttsRes.arrayBuffer();
+        console.log("Audio generated successfully, size:", audio.byteLength);
         return new Response(audio, {
             headers: { "Content-Type": "audio/mpeg" },
         });
     } catch (error) {
         console.error("API error:", error);
-        return new Response("Internal server error", { status: 500 });
+        return new Response(
+            JSON.stringify({
+                error: "Internal server error",
+                details: String(error),
+            }),
+            { status: 500, headers: { "Content-Type": "application/json" } }
+        );
     }
 }
